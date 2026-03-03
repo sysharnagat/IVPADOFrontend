@@ -1,15 +1,13 @@
 import './App.css'
-import BurnUpChart from './components/burnupChart/BurnUpChart'
-// import MuiSprintVelocityChart from './components/burnupChart/MuiSprintVelocityChart'
+import HighChartsBarChart from './components/burnupChart/HighChartsBarChart'
 import SpillageProvider from './context/SpillageProvider'
 
 function App() {
   return (
     <>
       <SpillageProvider>
-        ADO Dashboard Performance
-        <BurnUpChart/>
-        {/* <MuiSprintVelocityChart/> */}
+        <h1>ADO Dashboard Performance</h1>
+        <HighChartsBarChart/>
       </SpillageProvider>
     </>
   )
