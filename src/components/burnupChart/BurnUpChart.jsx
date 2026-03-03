@@ -42,10 +42,10 @@ const BurnUpChart = () => {
       <h3>Sprint Velocity: Assigned vs Completed</h3>
       <ResponsiveContainer>
         <BarChart
-            width={1000} 
+            width={800} 
             height={400}
           data={chartData}
-          margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+          margin={{ top: 20, right: 10, left: 20, bottom: 60 }}
         >
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis 
@@ -58,8 +58,9 @@ const BurnUpChart = () => {
           <YAxis />
           <Tooltip />
           <Legend verticalAlign="top" />
-          <Bar dataKey="assigned" name="Assigned Points" fill="#8884d8" />
           <Bar dataKey="completed" name="Completed Points" fill="#82ca9d" />
+          <Bar dataKey="assigned" name="Assigned Points" fill="#8884d8" />
+          
         </BarChart>
       </ResponsiveContainer>
     </div>
