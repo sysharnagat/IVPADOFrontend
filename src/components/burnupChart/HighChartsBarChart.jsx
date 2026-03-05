@@ -1,3 +1,108 @@
+// import React from 'react'
+// import HighchartsReact from 'highcharts-react-official'
+// import Highcharts from 'highcharts'
+// import { useSpillageContext } from '../../context/SpillageProvider'
+
+// // 1. Helper for Bar Charts (Sprint Velocity)
+// const renderBarChart = (title, statsArray, barColor) => {
+//   const getNumericValue = (obj, keys) => {
+//     for (const k of keys) {
+//       let v = obj?.[k]
+//       if (v === undefined || v === null) continue
+//       const n = typeof v === 'string' ? Number(v.replace(/[,\s]/g, '')) : v
+//       if (!Number.isNaN(n)) return n
+//     }
+//     return 0
+//   }
+
+//   // Use PascalCase keys to match your C# DTO
+//   const sprintNames = statsArray.map(item => item.IterationPath?.split('\\').pop() || 'Sprint')
+//   const assignedData = statsArray.map(item => getNumericValue(item, ['TotalPointsAssigned']))
+//   const completedData = statsArray.map(item => getNumericValue(item, ['TotalPointsCompleted']))
+
+//   const options = {
+//     chart: { type: 'column' },
+//     title: { text: title },
+//     xAxis: { categories: sprintNames },
+//     yAxis: { title: { text: 'Story Points' } },
+//     series: [
+//       { name: 'Assigned Points', data: assignedData, color: barColor },
+//       { name: 'Completed Points', data: completedData, color: '#82ca9d' }
+//     ],
+//     credits: { enabled: false }
+//   }
+
+//   return (
+//     <div style={{ flex: 1, minWidth: '400px', padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+//        <HighchartsReact highcharts={Highcharts} options={options} />
+//     </div>
+//   )
+// }
+
+// // 2. Helper for Line Charts (Spilled Points)
+// const renderLineChart = (title, spillageArray, lineColor) => {
+//   const sprintNames = spillageArray.map(item => item.IterationPath?.split('\\').pop() || 'Sprint')
+  
+//   // Calculate spilled points: Assigned - Completed
+//   const spilledData = spillageArray.map(item => {
+//     const assigned = item.TotalPointsAssigned || 0
+//     const completed = item.TotalPointsCompleted || 0
+//     return Math.max(0, assigned - completed) 
+//   })
+
+//   const options = {
+//     chart: { type: 'line' },
+//     title: { text: title },
+//     xAxis: { categories: sprintNames },
+//     yAxis: { title: { text: 'Spilled Points' } },
+//     series: [
+//       { name: 'Spilled Points', data: spilledData, color: lineColor }
+//     ],
+//     credits: { enabled: false }
+//   }
+
+//   return (
+//     <div style={{ flex: 1, minWidth: '400px', padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+//        <HighchartsReact highcharts={Highcharts} options={options} />
+//     </div>
+//   )
+// }
+
+// // 3. Main Dashboard Component
+// const HighChartsBarChart = () => {
+//   const { data, loading } = useSpillageContext()
+
+//   if (loading || !data) {
+//     return <div style={{ textAlign: 'center', padding: '50px' }}>Loading Dashboard Data...</div>
+//   }
+
+//   return (
+//     <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+      
+//       {/* ALL SECTION */}
+//       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+//         {renderBarChart("All Velocity", data.all?.stats || [], "#8884d8")}
+//         {renderLineChart("All Spillage Trend", data.all?.spillage || [], "#ff4d4d")}
+//       </div>
+
+//       {/* FEATURE SECTION */}
+//       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+//         {renderBarChart("Feature Velocity", data.feature?.stats || [], "#ffc658")}
+//         {renderLineChart("Feature Spillage Trend", data.feature?.spillage || [], "#ff4d4d")}
+//       </div>
+
+//       {/* CLIENT SECTION */}
+//       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+//         {renderBarChart("Client Velocity", data.client?.stats || [], "#ff8042")}
+//         {renderLineChart("Client Spillage Trend", data.client?.spillage || [], "#ff4d4d")}
+//       </div>
+      
+//     </div>
+//   )
+// }
+
+// export default HighChartsBarChart
+
 import React from 'react'
 import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
@@ -42,11 +147,52 @@ const renderChart = (title, statsArray, barColor) => {
   }
 
   return (
-    <div style={{ marginBottom: '40px', padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+    <div style={{ flex: 1, padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
        <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   )
 }
+
+const renderLineChart = (title, spillageArray, lineColor) => {
+  // 1. Map labels using 'iterationPath' from your log
+  const categories = spillageArray.map(item => 
+    item.iterationPath?.split('\\').pop() || 'Sprint'
+  );
+
+  // 2. Map data using 'spillagePoints' from your log
+  const spilledData = spillageArray.map(item => item.spillagePoints || 0);
+
+  const options = {
+    chart: { 
+      type: 'line',
+      style: { fontFamily: 'Roboto, Arial, sans-serif' }
+    },
+    title: { text: title },
+    xAxis: { 
+      categories: categories,
+      labels: { rotation: -45 } 
+    },
+    yAxis: { 
+      title: { text: 'Spilled Points' },
+      min: 0 
+    },
+    series: [{
+      name: 'Spilled Points',
+      data: spilledData,
+      color: lineColor,
+      marker: { enabled: true, radius: 5 },
+      lineWidth: 3
+    }],
+    credits: { enabled: false }
+  };
+
+  return (
+    <div style={{ flex: 1, padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+       <HighchartsReact highcharts={Highcharts} options={options} />
+    </div>
+  );
+};
+
 
 // 2. Main Component
 const HighChartsBarChart = () => {
@@ -58,13 +204,25 @@ const HighChartsBarChart = () => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      {/* <h1 style={{ textAlign: 'center' }}>ADO Dashboard Performance</h1> */}
+    <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '40px' }}>
       
-      {/* Render each of the three charts by passing their specific stats arrays */}
-      {renderChart("All Stats", data.all?.stats || [], "#8884d8")}
-      {renderChart("Feature Stats", data.feature?.stats || [], "#ffc658")}
-      {renderChart("Client Issue Stats", data.client?.stats || [], "#ff8042")}
+      {/* 1. ALL SECTION */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        {renderChart("All Stats", data.all?.stats || [], "#8884d8")}
+        {renderLineChart("All Spillage Trend", data.all?.spillage || [], "#ff4d4d")}
+      </div>
+
+      {/* 2. FEATURE SECTION */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        {renderChart("Feature Stats", data.feature?.stats || [], "#ffc658")}
+        {renderLineChart("Feature Spillage Trend", data.feature?.spillage || [], "#ff4d4d")}
+      </div>
+
+      {/* 3. CLIENT SECTION */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        {renderChart("Client Issue Stats", data.client?.stats || [], "#ff8042")}
+        {renderLineChart("Client Issues Spillage Trend", data.client?.spillage || [], "#ff4d4d")}
+      </div>
       
     </div>
   )

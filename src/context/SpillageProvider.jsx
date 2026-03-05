@@ -14,9 +14,8 @@ const SpillageProvider = ({ children }) => {
     }, []);
 
     const fetchData = async () => {
-      setLoading(true); // Always good practice to track when a fetch starts
+      setLoading(true); 
       try {
-          // Remove the ".All" at the end of the call
           const res = await fetchTimeFrames.getAllSprintData(6);
           
           console.log('SpillageProvider: Full API Response', res);
@@ -34,7 +33,7 @@ const SpillageProvider = ({ children }) => {
 
     // const fetchData = async () => {
     //     try{
-    //       const res = await fetchTimeFrames.getAllSprintData(6).All;
+    //       const res = await fetchTimeFrames.getAllSprintData(6);
     //       console.log('SpillageProvider: fetched data', res);
     //       setData(res);
     //     }catch(error){
