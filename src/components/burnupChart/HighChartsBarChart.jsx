@@ -3,8 +3,8 @@ import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
 import { useSpillageContext } from '../../context/SpillageProvider'
 
-const HighChartsBarChart = () => {
-  const { data } = useSpillageContext()
+const HighChartsBarChart = ({data}) => {
+    console.log(data);
 
   if (!data || data.length === 0) {
     return (

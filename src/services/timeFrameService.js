@@ -5,7 +5,7 @@ export const fetchTimeFrames = {
     getAllSprintData : async (timeFrame) => {
         try {
 
-            const response = await apiConfig.get(`burnup-all/IVP-SRM/${timeFrame}`);
+            const response = await apiConfig.get(`summary-time/IVP-SRM/${timeFrame}`);
 
             return response.data; 
 

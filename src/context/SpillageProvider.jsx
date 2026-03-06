@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import { fetchTimeFrames } from '../services/timeFrameService';
+import { fetchNSrpints } from '../services/nSprintsService';
 
 const spillageContext = createContext();
 
@@ -15,7 +16,7 @@ const SpillageProvider = ({ children }) => {
 
     const fetchData = async () => {
         try{
-          const res = await fetchTimeFrames.getAllSprintData(5);
+          const res = await fetchNSrpints.getAllSprintData(5);
           console.log('SpillageProvider: fetched data', res);
           setData(res);
         }catch(error){
