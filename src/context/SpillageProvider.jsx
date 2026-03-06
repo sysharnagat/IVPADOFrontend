@@ -15,14 +15,32 @@ const SpillageProvider = ({ children }) => {
     }, []);
 
     const fetchData = async () => {
-        try{
-          const res = await fetchNSrpints.getAllSprintData(5);
-          console.log('SpillageProvider: fetched data', res);
-          setData(res);
-        }catch(error){
-          console.log(error);
-        } 
-    }
+      setLoading(true); 
+      try {
+          const res = await fetchTimeFrames.getAllSprintData(6);
+          
+          console.log('SpillageProvider: Full API Response', res);
+          
+          // Save the entire object: { All: {...}, Feature: {...}, Client: {...} }
+          setData(res); 
+          setError(null);
+      } catch (error) {
+          console.error("Fetch Error:", error);
+          setError(error.message);
+      } finally {
+          setLoading(false);
+      }
+  }
+
+    // const fetchData = async () => {
+    //     try{
+    //       const res = await fetchTimeFrames.getAllSprintData(6);
+    //       console.log('SpillageProvider: fetched data', res);
+    //       setData(res);
+    //     }catch(error){
+    //       console.log(error);
+    //     } 
+    // }
     
   return (
     <spillageContext.Provider value={{ error, setError, loading, setLoading, data }}>
@@ -36,4 +54,3 @@ export const useSpillageContext = () => {
 }
         
 export default SpillageProvider;
-
