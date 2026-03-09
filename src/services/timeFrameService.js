@@ -2,12 +2,12 @@ import { apiConfig } from "./apiConfig";
 
 export const fetchTimeFrames = {
 
-    getAllSprintData : async (timeFrame) => {
+    getAllSprintData : async ({project, params}) => {
         try {
 // https://localhost:7043/api/Spillage/summary-last/ivp-srm/5
             // const response = await apiConfig.get(`burnup-all/IVP-SRM/${timeFrame}`);
 
-            const response = await apiConfig.get(`summary-last/IVP-SRM/${timeFrame}`);
+            const response = await apiConfig.get(`summary/${project}/`, {params});
 
             return response.data; 
 

@@ -2,9 +2,9 @@ import React from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts'
 import { useSpillageContext } from '../../context/SpillageProvider';
 
-const BurnUpChart = () => {
+const BurnUpChart = ({data}) => {
 
-    const {data} = useSpillageContext();
+ 
 
     if (!data || data.length === 0) {
     return (

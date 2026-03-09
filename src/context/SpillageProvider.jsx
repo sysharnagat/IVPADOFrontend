@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import { fetchTimeFrames } from '../services/timeFrameService';
+import { fetchNSrpints } from '../services/nSprintsService';
 
 const spillageContext = createContext();
 
@@ -8,15 +9,26 @@ const SpillageProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState(null);
+    const [project, setProject] = useState('IVP-SRM');
+    const [nSprints, setNSprints] = useState(6);
+    const [timeFrame, setTimeFrame] = useState(null);
+
+    const params = new URLSearchParams();
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [project,nSprints,timeFrame]);
 
     const fetchData = async () => {
       setLoading(true); 
       try {
-          const res = await fetchTimeFrames.getAllSprintData(6);
+          if (timeFrame) {
+              params.append('timeframe', timeFrame);
+              params.append('n', nSprints);
+          }else {
+              params.append('lastNSprints', nSprints);
+          }
+          const res = await fetchTimeFrames.getAllSprintData({project, params});
           
           console.log('SpillageProvider: Full API Response', res);
           
@@ -42,7 +54,13 @@ const SpillageProvider = ({ children }) => {
     // }
     
   return (
-    <spillageContext.Provider value={{ error, setError, loading, setLoading, data }}>
+    <spillageContext.Provider value={{ 
+        error, setError, 
+        loading, setLoading, 
+        data, setProject, 
+        nSprints, setNSprints, 
+        timeFrame, setTimeFrame, 
+        }}>
       {children}
     </spillageContext.Provider>
   )

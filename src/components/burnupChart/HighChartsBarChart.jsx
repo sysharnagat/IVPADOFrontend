@@ -110,7 +110,6 @@ import { useSpillageContext } from '../../context/SpillageProvider'
 
 // 1. Create a helper function to extract data for each chart
 const renderChart = (title, statsArray, barColor) => {
-  console.log(`First item in ${title}:`, statsArray[0]);
   const getNumericValue = (obj, keys) => {
     for (const k of keys) {
       let v = obj?.[k]
@@ -195,8 +194,8 @@ const renderLineChart = (title, spillageArray, lineColor) => {
 
 
 // 2. Main Component
-const HighChartsBarChart = () => {
-  const { data, loading } = useSpillageContext()
+const HighChartsBarChart = ({data}) => {
+  const { loading } = useSpillageContext()
 
   // Guard clause for loading or empty data
   if (loading || !data) {
@@ -204,7 +203,7 @@ const HighChartsBarChart = () => {
   }
 
   return (
-    <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+    <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '40px', width: '100%' }}>
       
       {/* 1. ALL SECTION */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
