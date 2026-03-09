@@ -104,96 +104,29 @@
 // export default HighChartsBarChart
 
 import React from 'react'
-import HighchartsReact from 'highcharts-react-official'
-import Highcharts from 'highcharts'
 import { useSpillageContext } from '../../context/SpillageProvider'
+import RenderChart from './RenderChart'
+import RenderLineChart from './RenderLineChart'
+import UserStoryCard from '../UserStoryCard'
 
-// 1. Create a helper function to extract data for each chart
-const renderChart = (title, statsArray, barColor) => {
-  const getNumericValue = (obj, keys) => {
-    for (const k of keys) {
-      let v = obj?.[k]
-      if (v === undefined || v === null) continue
-      const n = typeof v === 'string' ? Number(v.replace(/[,\s]/g, '')) : v
-      if (!Number.isNaN(n)) return n
+export const sections = [
+    { 
+      key: 'all', 
+      title: 'All', 
+      barColor: '#8884d8' 
+    },
+    { 
+      key: 'feature', 
+      title: 'Feature', 
+      barColor: '#ffc658' 
+    },
+    { 
+      key: 'client', 
+      title: 'Client', 
+      barColor: '#ff8042' 
     }
-    return 0
-  }
+  ];
 
-  // Map the specific stats array (e.g., data.All.stats)
-  const sprintNames = statsArray.map(item => 
-    item.iterationPath?.split('\\').pop() || item.name || 'Sprint'
-  )
-
-  const assignedData = statsArray.map(item =>
-    getNumericValue(item, ['totalPointsAssigned', 'assignedPoints', 'assigned'])
-  )
-
-  const completedData = statsArray.map(item =>
-    getNumericValue(item, ['totalPointsCompleted', 'completedPoints', 'completed'])
-  )
-
-  const options = {
-    chart: { type: 'column' },
-    title: { text: title },
-    xAxis: { categories: sprintNames },
-    yAxis: { title: { text: 'Story Points' } },
-    series: [
-      { name: 'Assigned Points', data: assignedData, color: barColor },
-      { name: 'Completed Points', data: completedData, color: '#82ca9d' }
-    ],
-    credits: { enabled: false }
-  }
-
-  return (
-    <div style={{ flex: 1, padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-       <HighchartsReact highcharts={Highcharts} options={options} />
-    </div>
-  )
-}
-
-const renderLineChart = (title, spillageArray, lineColor) => {
-  // 1. Map labels using 'iterationPath' from your log
-  const categories = spillageArray.map(item => 
-    item.iterationPath?.split('\\').pop() || 'Sprint'
-  );
-
-  // 2. Map data using 'spillagePoints' from your log
-  const spilledData = spillageArray.map(item => item.spillagePoints || 0);
-
-  const options = {
-    chart: { 
-      type: 'line',
-      style: { fontFamily: 'Roboto, Arial, sans-serif' }
-    },
-    title: { text: title },
-    xAxis: { 
-      categories: categories,
-      labels: { rotation: -45 } 
-    },
-    yAxis: { 
-      title: { text: 'Spilled Points' },
-      min: 0 
-    },
-    series: [{
-      name: 'Spilled Points',
-      data: spilledData,
-      color: lineColor,
-      marker: { enabled: true, radius: 5 },
-      lineWidth: 3
-    }],
-    credits: { enabled: false }
-  };
-
-  return (
-    <div style={{ flex: 1, padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-       <HighchartsReact highcharts={Highcharts} options={options} />
-    </div>
-  );
-};
-
-
-// 2. Main Component
 const HighChartsBarChart = ({data}) => {
   const { loading } = useSpillageContext()
 
@@ -202,32 +135,29 @@ const HighChartsBarChart = ({data}) => {
     return <div style={{ textAlign: 'center', padding: '50px' }}>Loading Dashboard Data...</div>
   }
 
+  
+
   return (
-    <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '40px', width: '100%' }}>
-      
-      {/* 1. ALL SECTION */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {renderChart("All Stats", data.all?.stats || [], "#8884d8")}
-        {renderLineChart("All Spillage Trend", data.all?.spillage || [], "#ff4d4d")}
-      </div>
-
-      {/* 2. FEATURE SECTION */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {renderChart("Feature Stats", data.feature?.stats || [], "#ffc658")}
-        {renderLineChart("Feature Spillage Trend", data.feature?.spillage || [], "#ff4d4d")}
-      </div>
-
-      {/* 3. CLIENT SECTION */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {renderChart("Client Issue Stats", data.client?.stats || [], "#ff8042")}
-        {renderLineChart("Client Issues Spillage Trend", data.client?.spillage || [], "#ff4d4d")}
-      </div>
-      
+    <div className="dashboard-wrapper">
+      {sections.map((section) => (
+        <div key={section.key} className="section-container">
+          <RenderChart 
+            title={`${section.title} Stats`} 
+            statsArray={data[section.key]?.stats || []} 
+            barColor={section.barColor} 
+          />
+          <RenderLineChart 
+            title={`${section.title} Spillage Trend`} 
+            spillageArray={data[section.key]?.spillage || []} 
+            lineColor="#ff4d4d" 
+          />
+        </div>
+      ))}
     </div>
-  )
+  );
 }
 
-export default HighChartsBarChart
+export default HighChartsBarChart;
 
 
 // import React from 'react'
