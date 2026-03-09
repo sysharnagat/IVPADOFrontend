@@ -9,7 +9,8 @@ function App() {
     <>
       <SpillageProvider>
         <h1>ADO Dashboard Performance</h1>
-        <DashboardPage/>
+        {/* <HighChartsBarChart /> */}
+        <DashboardPage />
       </SpillageProvider>
     </>
   )
